@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.kapt)
 }
 
 android {
@@ -13,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.example.aushadhiplus"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -39,9 +37,6 @@ android {
     buildFeatures {
         compose = true
     }
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -62,15 +57,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
-    // hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
 }
