@@ -40,7 +40,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://localhost:3000/api/")
+            .baseUrl("https://jaelyn-pronational-impecuniously.ngrok-free.dev/api/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
