@@ -1,7 +1,6 @@
-package com.example.aushadhiplus.data.remote
+package com.example.aushadhiplus.data.remote.api
 
 import com.example.aushadhiplus.data.remote.dto.UserDto
-import retrofit2.Response
 import retrofit2.http.GET
 
 interface ApiService {

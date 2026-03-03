@@ -1,6 +1,8 @@
 package com.example.aushadhiplus.di
 
-import com.example.aushadhiplus.data.remote.ApiService
+import com.example.aushadhiplus.data.remote.api.ApiService
+import com.example.aushadhiplus.data.remote.api.AuthApiService
+import com.example.aushadhiplus.data.remote.interceptor.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +52,13 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit) : ApiService {
         return retrofit.create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApiService(
+        retrofit: Retrofit
+    ): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
     }
 }
