@@ -1,5 +1,7 @@
 package com.example.aushadhiplus.data.remote.dto
 
+
+// represent backend contract
 data class UserDto(
     val _id: String,
     val name: String,

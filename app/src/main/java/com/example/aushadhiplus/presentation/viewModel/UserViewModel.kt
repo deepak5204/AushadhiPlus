@@ -2,6 +2,7 @@ package com.example.aushadhiplus.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.aushadhiplus.core.util.Resource
 import com.example.aushadhiplus.data.repository.UserRepository
 import com.example.aushadhiplus.presentation.state.UserUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,23 +24,26 @@ class UserViewModel @Inject constructor(
     fun loadUsers() {
         viewModelScope.launch {
             _uiState.value = UserUiState(isLoading = true)
-            try {
-                val result = repository.getUsers()
-                _uiState.value = UserUiState(
-                    users = result,
-                    isLoading = false
-                )
-                println(result)
+            val result = repository.getUsers()
+            when(result){
+                is Resource.Success -> {
+                    _uiState.value = UserUiState(
+                        users = result.data
+                    )
+                }
 
-            } catch(e: Exception) {
-                _uiState.value = UserUiState(
-                    error = e.message,
-                    isLoading = false
-                )
-                println("{$e getting error while fetching user list}")
+                is Resource.Error<*> -> {
+                    _uiState.value = UserUiState(
+                        error = result.message
+                    )
+                }
+
+                is Resource.Loading<*> -> {
+                    _uiState.value = UserUiState(
+                        isLoading = true
+                    )
+                }
             }
         }
     }
-
-
 }
