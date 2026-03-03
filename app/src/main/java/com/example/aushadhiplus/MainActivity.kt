@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
+import com.example.aushadhiplus.presentation.auth.LoginScreen
 import com.example.aushadhiplus.presentation.user.UserScreen
 import com.example.aushadhiplus.presentation.viewModel.UserViewModel
 import com.example.aushadhiplus.ui.theme.AushadhiPlusTheme
@@ -29,8 +30,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             AushadhiPlusTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    UserScreen(
-                        modifier = Modifier.padding(innerPadding)
+                    LoginScreen(
+                        onLoginSuccess = {
+                            println("Login Success ✅")
+                        }
                     )
                 }
             }
