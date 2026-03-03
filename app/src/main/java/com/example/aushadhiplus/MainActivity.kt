@@ -7,15 +7,22 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import com.example.aushadhiplus.presentation.auth.AuthState
 import com.example.aushadhiplus.presentation.auth.LoginScreen
+import com.example.aushadhiplus.presentation.navigation.AppNavGraph
 import com.example.aushadhiplus.presentation.user.UserScreen
 import com.example.aushadhiplus.presentation.user.UserViewModel
+import com.example.aushadhiplus.presentation.viewModel.AppViewModel
 import com.example.aushadhiplus.ui.theme.AushadhiPlusTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,13 +35,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
+            val viewModel: AppViewModel = hiltViewModel()
+            val authState by viewModel.authState.collectAsState()
+
             AushadhiPlusTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(
-                        onLoginSuccess = {
-                            println("Login Success ✅")
-                        }
-                    )
+                when(authState){
+                    AuthState.Authenticated -> {
+                        AppNavGraph(startDestination = "home")
+                    }
+                    AuthState.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    AuthState.Unauthenticated -> {
+                        AppNavGraph(startDestination = "login")
+                    }
                 }
             }
         }
