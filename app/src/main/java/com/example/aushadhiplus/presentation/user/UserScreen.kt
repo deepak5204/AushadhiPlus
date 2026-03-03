@@ -12,7 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.aushadhiplus.presentation.viewModel.UserViewModel
+import com.example.aushadhiplus.presentation.user.UserViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel

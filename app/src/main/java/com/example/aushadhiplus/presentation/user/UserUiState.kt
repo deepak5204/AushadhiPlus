@@ -1,4 +1,4 @@
-package com.example.aushadhiplus.presentation.state
+package com.example.aushadhiplus.presentation.user
 
 import com.example.aushadhiplus.domain.model.User
 

@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import com.example.aushadhiplus.presentation.auth.LoginScreen
 import com.example.aushadhiplus.presentation.user.UserScreen
-import com.example.aushadhiplus.presentation.viewModel.UserViewModel
+import com.example.aushadhiplus.presentation.user.UserViewModel
 import com.example.aushadhiplus.ui.theme.AushadhiPlusTheme
 import dagger.hilt.android.AndroidEntryPoint
 
