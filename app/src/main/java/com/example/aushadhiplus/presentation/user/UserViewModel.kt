@@ -18,6 +18,9 @@ class UserViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState : StateFlow<UserUiState> = _uiState
 
+    init{
+        loadUsers()
+    }
     fun loadUsers() {
         viewModelScope.launch {
             _uiState.value = UserUiState(isLoading = true)
