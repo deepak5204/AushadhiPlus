@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.aushadhiplus.presentation.auth.LoginScreen
+import com.example.aushadhiplus.presentation.dashboard.DashboardScreen
 import com.example.aushadhiplus.presentation.user.UserScreen
 
 @Composable
@@ -30,7 +31,8 @@ fun AppNavGraph(
         }
 
         composable("home") {
-            UserScreen()
+//            UserScreen()
+            DashboardScreen()
         }
     }
 }
