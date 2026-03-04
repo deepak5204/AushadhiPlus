@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.aushadhiplus.presentation.auth.LoginScreen
 import com.example.aushadhiplus.presentation.dashboard.DashboardScreen
+import com.example.aushadhiplus.presentation.medicine.MedicineScreen
 import com.example.aushadhiplus.presentation.user.UserScreen
 
 @Composable
@@ -32,7 +33,17 @@ fun AppNavGraph(
 
         composable("home") {
 //            UserScreen()
-            DashboardScreen()
+            DashboardScreen(
+                onInventoryClick = {
+                    navController.navigate(route = "medicine") {
+                        popUpTo("home")
+                    }
+                }
+            )
+        }
+
+        composable(route = "medicine") {
+            MedicineScreen()
         }
     }
 }

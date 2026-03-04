@@ -63,7 +63,8 @@ val BackgroundGray = Color(0xFFF5F5F5)
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = hiltViewModel(),
+    onInventoryClick: () -> Unit = {}
 ) {
 
     val state by viewModel.uiState.collectAsState()
@@ -82,7 +83,9 @@ fun DashboardScreen(
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(selected = true, onClick = {}, icon = {Icon(Icons.Default.Dashboard, contentDescription = "Dashboard")}, label = { Text("Dashboard") })
-                NavigationBarItem(selected = false, onClick = {}, icon = { Icon(Icons.Default.Inventory, "Inventory") }, label = { Text("Inventory") })
+                NavigationBarItem(selected = false, onClick = {
+                    onInventoryClick()
+                }, icon = { Icon(Icons.Default.Inventory, "Inventory") }, label = { Text("Inventory") })
                 NavigationBarItem(selected = false, onClick = {}, icon = { Icon(Icons.Default.BarChart, "Reports") }, label = { Text("Reports") })
                 NavigationBarItem(selected = false, onClick = {}, icon = { Icon(Icons.Default.Settings, "Settings") }, label = { Text("Settings") })
             }
@@ -91,7 +94,7 @@ fun DashboardScreen(
 
         when(state){
             is DashboardUiState.Error -> {
-                Text(text = (state as DashboardUiState.Error).message)
+                Text(text = (state as DashboardUiState.Error).message ?: "Something went wrong")
             }
 
             DashboardUiState.isLoading -> {
@@ -201,5 +204,7 @@ fun AlertItem(name: String, qty: String) {
 @Preview(showBackground = true)
 @Composable
 private fun DashboardScreenPreview() {
-    DashboardScreen()
+    DashboardScreen(
+
+    )
 }

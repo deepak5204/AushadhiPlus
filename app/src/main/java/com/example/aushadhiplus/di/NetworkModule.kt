@@ -3,6 +3,7 @@ package com.example.aushadhiplus.di
 import com.example.aushadhiplus.data.remote.api.ApiService
 import com.example.aushadhiplus.data.remote.api.AuthApiService
 import com.example.aushadhiplus.data.remote.api.DashboardApiService
+import com.example.aushadhiplus.data.remote.api.MedicineApiService
 import com.example.aushadhiplus.data.remote.interceptor.AuthInterceptor
 import dagger.Module
 import dagger.Provides
@@ -69,6 +70,15 @@ object NetworkModule {
     @Singleton
     fun provideDashboardApiService(
         retrofit: Retrofit
-    ): DashboardApiService =
-        retrofit.create(DashboardApiService::class.java)
+    ): DashboardApiService {
+        return retrofit.create(DashboardApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMedicineApiService(
+        retrofit: Retrofit
+    ) : MedicineApiService {
+        return retrofit.create(MedicineApiService::class.java)
+    }
 }
