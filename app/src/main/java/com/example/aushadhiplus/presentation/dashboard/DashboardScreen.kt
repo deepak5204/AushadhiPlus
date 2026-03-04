@@ -26,9 +26,11 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -36,6 +38,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 // Color Palette from the image
@@ -55,7 +61,12 @@ val BackgroundGray = Color(0xFFF5F5F5)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(modifier: Modifier = Modifier) {
+fun DashboardScreen(
+    modifier: Modifier = Modifier,
+    viewModel: DashboardViewModel = hiltViewModel()
+) {
+
+    val state by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -78,56 +89,71 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
         }
     ) { paddingValues ->
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(BackgroundGray)
-                .padding(horizontal = 8.dp)
-        ) {
-
-            item {
-                Text(
-                    text = "Inventory Dashboard",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+        when(state){
+            is DashboardUiState.Error -> {
+                Text(text = (state as DashboardUiState.Error).message)
             }
 
-            // Stats Grid
-            item {
-                Column {
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        StatCard("TOTAL MEDICINES", "44", "Different items", DashboardBlue, Icons.Default.Medication, Modifier.weight(1f))
-                        StatCard("LOW STOCK ITEMS", "16", "Action required", DashboardAmber, Icons.Default.Warning, Modifier.weight(1f))
-                    }
-                    Spacer(Modifier.height(12.dp))
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        StatCard("EXPIRING SOON", "3", "Within 30 days", DashboardRed, Icons.Default.EventBusy, Modifier.weight(1f))
-                        StatCard("TOTAL VALUE", "₹43,519", "Current cost", DashboardGreen, Icons.Default.AccountBalanceWallet, Modifier.weight(1f))
-                    }
-                }
+            DashboardUiState.isLoading -> {
+                CircularProgressIndicator()
             }
 
-            // Recent Alerts Section
-            item {
-                Spacer(Modifier.height(24.dp))
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(12.dp)
+            is DashboardUiState.Success -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .background(BackgroundGray)
+                        .padding(horizontal = 8.dp)
                 ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text("Recent Low Stock Alerts", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        Spacer(Modifier.height(8.dp))
-                        AlertItem("Paracetamol", "12")
-                        AlertItem("Amoxicillin", "28")
+
+                    val data = (state as DashboardUiState.Success).data
+
+                    item {
+                        Text(
+                            text = "Inventory Dashboard",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+
+                    // Stats Grid
+                    item {
+                        Column {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                StatCard("TOTAL MEDICINES", "${data.totalMedicines}", "Different items", DashboardBlue, Icons.Default.Medication, Modifier.weight(1f))
+                                StatCard("LOW STOCK ITEMS", "${data.lowStockCount}", "Action required", DashboardAmber, Icons.Default.Warning, Modifier.weight(1f))
+                            }
+                            Spacer(Modifier.height(12.dp))
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                StatCard("EXPIRING SOON", "${data.expiringSoonCount}", "Within 30 days", DashboardRed, Icons.Default.EventBusy, Modifier.weight(1f))
+                                StatCard("TOTAL VALUE", "₹${data.totalInventoryValue}", "Current cost", DashboardGreen, Icons.Default.AccountBalanceWallet, Modifier.weight(1f))
+                            }
+                        }
+                    }
+
+                    // Recent Alerts Section
+                    item {
+                        Spacer(Modifier.height(24.dp))
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Column(Modifier.padding(16.dp)) {
+                                Text("Recent Low Stock Alerts", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Spacer(Modifier.height(8.dp))
+                                AlertItem("Paracetamol", "12")
+                                AlertItem("Amoxicillin", "28")
+                            }
+                        }
                     }
                 }
             }
-
         }
+
+
     }
 }
 
