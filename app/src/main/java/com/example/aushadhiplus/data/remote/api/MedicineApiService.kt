@@ -10,12 +10,15 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MedicineApiService {
 
-//    http://localhost:3000/api/medicines
+    //    http://localhost:3000/api/medicines
     @GET("medicines")
-    suspend fun getMedicines(): MedicineListResponse
+    suspend fun getMedicines(
+        @Query("page") page: Int, @Query("limit") limit: Int
+    ): MedicineListResponse
 
     @POST("medicines")
     suspend fun addMedicine(
@@ -24,8 +27,7 @@ interface MedicineApiService {
 
     @PUT("medicines/{id}")
     suspend fun updateMedicine(
-        @Path("id") id: String,
-        @Body request: MedicineRequest
+        @Path("id") id: String, @Body request: MedicineRequest
     ): Medicine
 
     @DELETE("medicines/{id}")
