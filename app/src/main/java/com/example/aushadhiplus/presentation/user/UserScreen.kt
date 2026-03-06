@@ -1,5 +1,6 @@
 package com.example.aushadhiplus.presentation.user
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,12 +16,12 @@ import androidx.compose.ui.unit.dp
 import com.example.aushadhiplus.presentation.user.UserViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun UserScreen(
-    modifier: Modifier = Modifier,
-    viewModel: UserViewModel = hiltViewModel()
+    modifier: Modifier = Modifier, viewModel: UserViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(Unit) {
@@ -30,7 +31,11 @@ fun UserScreen(
 
     when {
         state.isLoading -> {
-            CircularProgressIndicator()
+            Box(
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
 
         state.error != null -> {
@@ -39,8 +44,7 @@ fun UserScreen(
 
         else -> {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp)
+                modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)
             ) {
                 items(state.users) { user ->
                     Text(

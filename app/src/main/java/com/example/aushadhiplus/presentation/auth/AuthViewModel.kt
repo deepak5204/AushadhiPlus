@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -27,38 +27,33 @@ class AuthViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(password = password)
     }
 
-    fun login(){
+    fun login() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                error = null
+                isLoading = true, error = null
             )
 
             val result = repository.login(
-                _uiState.value.email,
-                _uiState.value.password
+                _uiState.value.email, _uiState.value.password
             )
 
-            when(result){
+            when (result) {
                 is Resource.Error<*> -> {
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            error = result.message
-                        )
-                }
-                is Resource.Loading<*> -> {
                     _uiState.value = _uiState.value.copy(
-                        isLoading = true,
-                        error = null
+                        isLoading = false, error = result.message
                     )
                 }
+
+                is Resource.Loading<*> -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = true, error = null
+                    )
+                }
+
                 is Resource.Success<*> -> {
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            isSuccess = true
-                        )
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false, isSuccess = true
+                    )
                 }
             }
         }

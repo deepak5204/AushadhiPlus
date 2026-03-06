@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MedicineViewModel @Inject constructor(
     private val repository: MedicineRepository
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow<MedicineUiState>(MedicineUiState.IsLoading)
     val uiState: StateFlow<MedicineUiState> = _uiState
 
@@ -21,15 +21,13 @@ class MedicineViewModel @Inject constructor(
         fetchMedicines()
     }
 
-    fun fetchMedicines(){
+    fun fetchMedicines() {
         viewModelScope.launch {
             try {
                 val result = repository.getMedicines()
                 _uiState.value = MedicineUiState.Success(data = result)
-            }
-            catch (e: Exception){
-                _uiState.value =
-                    MedicineUiState.Error(e.message ?: "Error")
+            } catch (e: Exception) {
+                _uiState.value = MedicineUiState.Error(e.message ?: "Error")
             }
         }
     }

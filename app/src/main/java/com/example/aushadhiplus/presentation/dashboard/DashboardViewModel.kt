@@ -15,22 +15,21 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val repository: DashboardRepository
 ) : ViewModel() {
-    private val _uiState =
-        MutableStateFlow<DashboardUiState>(DashboardUiState.isLoading)
+    private val _uiState = MutableStateFlow<DashboardUiState>(DashboardUiState.isLoading)
 
     val uiState: StateFlow<DashboardUiState> = _uiState
+
     init {
         fetchDashboardStats()
     }
 
-    private fun fetchDashboardStats(){
+    private fun fetchDashboardStats() {
         viewModelScope.launch {
             try {
                 val result = repository.getDashboardStats()
                 _uiState.value = DashboardUiState.Success(data = result)
             } catch (e: Exception) {
-                _uiState.value =
-                    DashboardUiState.Error(e.message ?: "Unknown error")
+                _uiState.value = DashboardUiState.Error(e.message ?: "Unknown error")
             }
         }
     }

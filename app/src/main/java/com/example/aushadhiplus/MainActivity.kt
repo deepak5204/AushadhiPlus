@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -20,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import com.example.aushadhiplus.presentation.auth.AuthState
 import com.example.aushadhiplus.presentation.auth.LoginScreen
 import com.example.aushadhiplus.presentation.navigation.AppNavGraph
+import com.example.aushadhiplus.presentation.navigation.MainScreen
 import com.example.aushadhiplus.presentation.user.UserScreen
 import com.example.aushadhiplus.presentation.user.UserViewModel
 import com.example.aushadhiplus.presentation.viewModel.AppViewModel
@@ -29,29 +32,36 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: UserViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
             val viewModel: AppViewModel = hiltViewModel()
             val authState by viewModel.authState.collectAsState()
 
             AushadhiPlusTheme {
-                when(authState){
+
+                when (authState) {
                     AuthState.Authenticated -> {
-                        AppNavGraph(startDestination = "home")
+                        MainScreen()
                     }
+
                     AuthState.Loading -> {
-                        CircularProgressIndicator()
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
+
                     AuthState.Unauthenticated -> {
-                        AppNavGraph(startDestination = "login")
+                        AppNavGraph(
+                            startDestination = "login",
+                        )
                     }
                 }
             }
         }
     }
 }
+

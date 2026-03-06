@@ -14,8 +14,7 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : ViewModel() {
-    private val _authState =
-        MutableStateFlow<AuthState>(AuthState.Loading)
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
 
     val authState: StateFlow<AuthState> = _authState
 
@@ -23,10 +22,10 @@ class AppViewModel @Inject constructor(
         checkLoginStatus()
     }
 
-    private fun checkLoginStatus(){
+    private fun checkLoginStatus() {
         viewModelScope.launch {
             tokenManager.token.collect { token ->
-                _authState.value = if(token.isNullOrEmpty()){
+                _authState.value = if (token.isNullOrEmpty()) {
                     AuthState.Unauthenticated
                 } else {
                     AuthState.Authenticated

@@ -12,14 +12,12 @@ import com.example.aushadhiplus.presentation.user.UserScreen
 
 @Composable
 fun AppNavGraph(
-    modifier: Modifier = Modifier,
-    startDestination: String
+    modifier: Modifier = Modifier, startDestination: String
 ) {
     val navController = rememberNavController()
 
     NavHost(
-        navController = navController,
-        startDestination = startDestination
+        navController = navController, startDestination = startDestination
     ) {
         composable("login") {
             LoginScreen(
@@ -27,23 +25,11 @@ fun AppNavGraph(
                     navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
-                }
-            )
+                })
         }
 
-        composable("home") {
-//            UserScreen()
-            DashboardScreen(
-                onInventoryClick = {
-                    navController.navigate(route = "medicine") {
-                        popUpTo("home")
-                    }
-                }
-            )
-        }
-
-        composable(route = "medicine") {
-            MedicineScreen()
+        composable("main") {
+            MainScreen()
         }
     }
 }

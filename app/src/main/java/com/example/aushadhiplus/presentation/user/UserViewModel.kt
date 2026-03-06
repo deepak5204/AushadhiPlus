@@ -14,18 +14,19 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val repository: UserRepository
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(UserUiState())
-    val uiState : StateFlow<UserUiState> = _uiState
+    val uiState: StateFlow<UserUiState> = _uiState
 
-    init{
+    init {
         loadUsers()
     }
+
     fun loadUsers() {
         viewModelScope.launch {
             _uiState.value = UserUiState(isLoading = true)
             val result = repository.getUsers()
-            when(result){
+            when (result) {
                 is Resource.Success -> {
                     _uiState.value = UserUiState(
                         users = result.data
