@@ -12,10 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,70 +36,79 @@ import com.example.aushadhiplus.presentation.medicine.components.MedicineItem
 
 @Composable
 fun MedicineScreen(
-    modifier: Modifier = Modifier, viewModel: MedicineViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: MedicineViewModel = hiltViewModel(),
+    onAddMedicineClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
-    val uiState = state
-    when (uiState) {
 
-        is MedicineUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAddMedicineClick() },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                shape = RoundedCornerShape(16.dp) // Professional rounded look
             ) {
-                CircularProgressIndicator()
+                Icon(
+                    imageVector = Icons.Default.Add, contentDescription = "Add Medicine"
+                )
             }
-        }
+        }) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            val uiState = state
+            when (uiState) {
 
-        is MedicineUiState.Error -> {
-            Text(text = (state as MedicineUiState.Error).message ?: "Something went wrong")
-        }
-
-        is MedicineUiState.Success -> {
-
-            val medicines = uiState.data.collectAsLazyPagingItems()
-
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                items(
-                    count = medicines.itemCount,
-                    key = { index -> medicines[index]?.id ?: index }) { index ->
-
-                    medicines[index]?.let { medicine ->
-                        MedicineItem(medicine)
+                is MedicineUiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
 
-                when (medicines.loadState.append) {
-                    is MedicineUiState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
+                is MedicineUiState.Error -> {
+                    Text(text = (state as MedicineUiState.Error).message ?: "Something went wrong")
+                }
+
+                is MedicineUiState.Success -> {
+
+                    val medicines = uiState.data.collectAsLazyPagingItems()
+
+                    LazyColumn(
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    ) {
+                        items(
+                            count = medicines.itemCount,
+                            key = { index -> medicines[index]?.id ?: index }) { index ->
+
+                            medicines[index]?.let { medicine ->
+                                MedicineItem(medicine)
                             }
+                        }
+
+                        when (medicines.loadState.append) {
+                            is MedicineUiState.Loading -> {
+                                item {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            }
+
+                            else -> {}
                         }
                     }
 
-                    else -> {}
                 }
             }
-
-//            val medicines = (uiState as MedicineUiState.Success).data.collectAsLazyPagingItems()
-//            LazyColumn(
-//                modifier = Modifier
-//                    .padding(horizontal = 8.dp)
-//            ) {
-//
-//                items(medicines.itemCount) { index ->
-//
-//                    medicines[index]?.let { medicine ->
-//                        MedicineItem(medicine)
-//                    }
-//                }
-//            }
         }
+
     }
+
+
 }
 

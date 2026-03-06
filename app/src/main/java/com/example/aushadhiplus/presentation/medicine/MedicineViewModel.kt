@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.aushadhiplus.data.repository.MedicineRepository
+import com.example.aushadhiplus.domain.model.MedicineRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +19,24 @@ class MedicineViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<MedicineUiState>(MedicineUiState.Loading)
     val uiState: StateFlow<MedicineUiState> = _uiState
 
+    private val _addState = MutableStateFlow<AddMedicineUiState>(AddMedicineUiState.Idle)
+    val addState: StateFlow<AddMedicineUiState> = _addState
+
     init {
         fetchMedicines()
+    }
+
+
+    fun addMedicine(request: MedicineRequest) {
+        viewModelScope.launch {
+            _addState.value = AddMedicineUiState.Loading
+            try {
+                repository.addMedicine(request)
+                _addState.value = AddMedicineUiState.Success
+            } catch (e: Exception) {
+                _addState.value = AddMedicineUiState.Error(e.message ?: "Error")
+            }
+        }
     }
 
     private fun fetchMedicines() {

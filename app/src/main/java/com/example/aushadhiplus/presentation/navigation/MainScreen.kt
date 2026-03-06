@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.*
 import com.example.aushadhiplus.presentation.dashboard.DashboardBlue
 import com.example.aushadhiplus.presentation.dashboard.DashboardScreen
+import com.example.aushadhiplus.presentation.medicine.AddMedicineScreen
 import com.example.aushadhiplus.presentation.medicine.MedicineScreen
 
 data class BottomNavItem(
@@ -96,7 +97,15 @@ fun MainScreen() {
             }
 
             composable("inventory") {
-                MedicineScreen()
+                MedicineScreen(
+                    onAddMedicineClick = {
+                        navController.navigate("add_medicine")
+                    }
+                )
+            }
+
+            composable("add_medicine") {
+                AddMedicineScreen()
             }
 
             composable("reports") {
