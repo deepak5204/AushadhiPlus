@@ -17,6 +17,7 @@ interface MedicineApiService {
     //    http://localhost:3000/api/medicines
     @GET("medicines")
     suspend fun getMedicines(
+        @Query("search") search: String?,
         @Query("page") page: Int, @Query("limit") limit: Int
     ): MedicineListResponse
 

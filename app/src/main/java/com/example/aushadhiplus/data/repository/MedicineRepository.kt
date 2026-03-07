@@ -14,13 +14,13 @@ import javax.inject.Inject
 class MedicineRepository @Inject constructor(
     private val apiService: MedicineApiService
 ) {
-    fun getMedicines(): Flow<PagingData<Medicine>> {
+    fun getMedicines(search: String): Flow<PagingData<Medicine>> {
 
         return Pager(
             config = PagingConfig(
                 pageSize = 20
             ), pagingSourceFactory = {
-                MedicinePagingSource(apiService)
+                MedicinePagingSource(api = apiService, search = search)
             }).flow
     }
 

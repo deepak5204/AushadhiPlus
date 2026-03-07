@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ fun MedicineScreen(
 
 ) {
     val state by viewModel.uiState.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.fetchMedicines()
     }
@@ -85,6 +87,21 @@ fun MedicineScreen(
                         contentPadding = PaddingValues(horizontal = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+
+                        item {
+
+                            OutlinedTextField(
+                                value = searchQuery,
+                                onValueChange = {
+                                    viewModel.onSearchQueryChanged(it)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                placeholder = { Text("Search medicine...") },
+                                shape = RoundedCornerShape(12.dp)
+                            )
+
+                        }
+
                         items(
                             count = medicines.itemCount,
                             key = { index -> medicines[index]?.id ?: index }) { index ->

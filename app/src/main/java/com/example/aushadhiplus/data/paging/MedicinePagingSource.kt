@@ -7,7 +7,8 @@ import com.example.aushadhiplus.data.remote.mapper.toDomain
 import com.example.aushadhiplus.domain.model.Medicine
 
 class MedicinePagingSource(
-    private val api: MedicineApiService
+    private val api: MedicineApiService,
+    private val search: String
 ) : PagingSource<Int, Medicine>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Medicine> {
@@ -15,7 +16,7 @@ class MedicinePagingSource(
             val page = params.key ?: 1
 
             val response = api.getMedicines(
-                page = page, limit = params.loadSize
+                search = search, page = page, limit = params.loadSize
             )
 
             val medicines = response.medicines.map { it.toDomain() }
