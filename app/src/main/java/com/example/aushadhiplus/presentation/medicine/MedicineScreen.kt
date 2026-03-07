@@ -1,8 +1,8 @@
 package com.example.aushadhiplus.presentation.medicine
 
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -68,7 +68,7 @@ fun MedicineScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding()
         ) {
             val uiState = state
             when (uiState) {
@@ -86,102 +86,87 @@ fun MedicineScreen(
                 }
 
                 is MedicineUiState.Success -> {
-
-                    val medicines = uiState.data.collectAsLazyPagingItems()
-
-                    LazyColumn(
-                        modifier = Modifier,
-                        contentPadding = PaddingValues(horizontal = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    Column(
+                        modifier = Modifier.fillMaxSize()
                     ) {
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = {
+                                viewModel.onSearchQueryChanged(it)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            placeholder = { Text("Search medicine...") },
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
 
-                        item {
+                        val medicines = uiState.data.collectAsLazyPagingItems()
 
-                            OutlinedTextField(
-                                value = searchQuery,
-                                onValueChange = {
-                                    viewModel.onSearchQueryChanged(it)
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Search medicine...") },
-                                shape = RoundedCornerShape(12.dp)
-                            )
+                        LazyColumn(
+                            modifier = Modifier,
+                            contentPadding = PaddingValues(horizontal = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
 
-                        }
+                            items(
+                                count = medicines.itemCount,
+                                key = { index -> medicines[index]?.id ?: index }) { index ->
 
-                        items(
-                            count = medicines.itemCount,
-                            key = { index -> medicines[index]?.id ?: index }) { index ->
-
-                            medicines[index]?.let { medicine ->
-                                MedicineItem(
-                                    medicine,
-                                    onEditClick = { medicine ->
+                                medicines[index]?.let { medicine ->
+                                    MedicineItem(medicine, onEditClick = { medicine ->
                                         onEditClick(medicine)
-                                    },
-                                    onDeleteClick = { medicine ->
+                                    }, onDeleteClick = { medicine ->
                                         medicineToDelete = medicine
-                                    }
-                                )
-                            }
-                        }
-
-                        when (medicines.loadState.append) {
-                            is MedicineUiState.Loading -> {
-                                item {
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
+                                    })
                                 }
                             }
 
-                            else -> {}
+                            when (medicines.loadState.append) {
+                                is MedicineUiState.Loading -> {
+                                    item {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator()
+                                        }
+                                    }
+                                }
+
+                                else -> {}
+                            }
                         }
                     }
 
                     medicineToDelete?.let { medicine ->
-
-                        AlertDialog(
-                            onDismissRequest = {
-                                medicineToDelete = null
-                            },
-                            title = {
-                                Text("Delete Medicine")
-                            },
-                            text = {
-                                Text("Are you sure you want to delete ${medicine.name}?")
-                            },
-                            confirmButton = {
-                                TextButton(
-                                    onClick = {
-                                        viewModel.deleteMedicine(medicine.id)
-                                        medicineToDelete = null
-                                    }
-                                ) {
-                                    Text("Delete")
-                                }
-                            },
-                            dismissButton = {
-                                TextButton(
-                                    onClick = {
-                                        medicineToDelete = null
-                                    }
-                                ) {
-                                    Text("Cancel")
-                                }
+                        AlertDialog(onDismissRequest = {
+                            medicineToDelete = null
+                        }, title = {
+                            Text("Delete Medicine")
+                        }, text = {
+                            Text("Are you sure you want to delete ${medicine.name}?")
+                        }, confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    viewModel.deleteMedicine(medicine.id)
+                                    medicineToDelete = null
+                                }) {
+                                Text("Delete")
                             }
-                        )
+                        }, dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    medicineToDelete = null
+                                }) {
+                                Text("Cancel")
+                            }
+                        })
                     }
-
                 }
             }
         }
-
     }
-
-
 }
 
