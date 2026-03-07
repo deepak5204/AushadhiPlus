@@ -106,7 +106,14 @@ fun MainScreen() {
             }
 
             composable("add_medicine") {
-                AddMedicineScreen()
+                AddMedicineScreen(
+                    onAdd = {
+                        navController.popBackStack()
+                    },
+                    onDismiss = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable("reports") {
