@@ -1,5 +1,6 @@
 package com.example.aushadhiplus.presentation.medicine
 
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -17,10 +19,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,6 +50,7 @@ fun MedicineScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchMedicines()
     }
+    var medicineToDelete by remember { mutableStateOf<Medicine?>(null) }
 
     Scaffold(
         floatingActionButton = {
@@ -111,6 +118,9 @@ fun MedicineScreen(
                                     medicine,
                                     onEditClick = { medicine ->
                                         onEditClick(medicine)
+                                    },
+                                    onDeleteClick = { medicine ->
+                                        medicineToDelete = medicine
                                     }
                                 )
                             }
@@ -130,6 +140,40 @@ fun MedicineScreen(
 
                             else -> {}
                         }
+                    }
+
+                    medicineToDelete?.let { medicine ->
+
+                        AlertDialog(
+                            onDismissRequest = {
+                                medicineToDelete = null
+                            },
+                            title = {
+                                Text("Delete Medicine")
+                            },
+                            text = {
+                                Text("Are you sure you want to delete ${medicine.name}?")
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        viewModel.deleteMedicine(medicine.id)
+                                        medicineToDelete = null
+                                    }
+                                ) {
+                                    Text("Delete")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        medicineToDelete = null
+                                    }
+                                ) {
+                                    Text("Cancel")
+                                }
+                            }
+                        )
                     }
 
                 }

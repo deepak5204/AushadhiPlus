@@ -39,6 +39,14 @@ class MedicineViewModel @Inject constructor(
     }
 
 
+
+    fun deleteMedicine(id: String) {
+        viewModelScope.launch {
+            repository.deleteMedicine(id)
+            fetchMedicines()
+        }
+    }
+
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         fetchMedicines()
@@ -48,19 +56,12 @@ class MedicineViewModel @Inject constructor(
         id: String,
         request: MedicineRequest
     ) {
-
         viewModelScope.launch {
-
             _addState.value = AddMedicineUiState.Loading
-
             try {
-
                 repository.updateMedicine(id, request)
-
                 _addState.value = AddMedicineUiState.Success
-
             } catch (e: Exception) {
-
                 _addState.value =
                     AddMedicineUiState.Error(e.message ?: "Update failed")
             }
@@ -84,9 +85,7 @@ class MedicineViewModel @Inject constructor(
 //        viewModelScope.launch { // Pager.flow → already async stream
         try {
             val medicinesFlow = repository.getMedicines( search = _searchQuery.value).cachedIn(viewModelScope)
-
             _uiState.value = MedicineUiState.Success(data = medicinesFlow)
-
         } catch (e: Exception) {
             _uiState.value = MedicineUiState.Error(e.message ?: "Something went wrong")
         }

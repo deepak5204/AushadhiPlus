@@ -4,6 +4,7 @@ import com.example.aushadhiplus.data.remote.dto.MedicineListResponse
 import com.example.aushadhiplus.data.remote.dto.MedicineResponse
 import com.example.aushadhiplus.domain.model.Medicine
 import com.example.aushadhiplus.domain.model.MedicineRequest
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -34,5 +35,5 @@ interface MedicineApiService {
     @DELETE("medicines/{id}")
     suspend fun deleteMedicine(
         @Path("id") id: String
-    )
+    ) : Response<Unit>
 }
