@@ -3,6 +3,7 @@ package com.example.aushadhiplus.presentation.medicine
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,7 +56,9 @@ fun MedicineScreen(
                 )
             }
         }) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(modifier = Modifier.fillMaxSize()
+            .padding(paddingValues)
+         ) {
             val uiState = state
             when (uiState) {
 
@@ -76,7 +79,9 @@ fun MedicineScreen(
                     val medicines = uiState.data.collectAsLazyPagingItems()
 
                     LazyColumn(
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        modifier = Modifier,
+                        contentPadding = PaddingValues(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
                             count = medicines.itemCount,
