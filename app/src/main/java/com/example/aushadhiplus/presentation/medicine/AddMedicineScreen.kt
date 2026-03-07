@@ -62,7 +62,10 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicineScreen(
     onDismiss: () -> Unit = {},
@@ -83,6 +86,13 @@ fun AddMedicineScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val categories = listOf("Tablet", "Syrup", "Injection")
+    var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -270,19 +280,71 @@ fun AddMedicineScreen(
                                         }
                                     }
                                 )
-                                FormField(
-                                    label = "Category",
-                                    value = category,
-                                    onValueChange = { category = it },
-                                    placeholder = "category",
-                                    modifier = Modifier.weight(1f),
-                                    trailingIcon = {
-                                        Icon(
-                                            Icons.Default.KeyboardArrowDown,
-                                            contentDescription = null,
-                                            tint = Color.Gray
+//                                FormField(
+//                                    label = "Category",
+//                                    value = category,
+//                                    onValueChange = { category = it },
+//                                    placeholder = "category",
+//                                    modifier = Modifier.weight(1f),
+//                                    trailingIcon = {
+//                                        Icon(
+//                                            Icons.Default.KeyboardArrowDown,
+//                                            contentDescription = null,
+//                                            tint = Color.Gray
+//                                        )
+//                                    })
+
+                                Column(modifier = Modifier.weight(1f)) {
+
+                                    Text(
+                                        text = "Category",
+                                        fontSize = 14.sp,
+                                        color = Color.Gray
+                                    )
+
+                                    ExposedDropdownMenuBox(
+                                        expanded = expanded,
+                                        onExpandedChange = { expanded = !expanded }
+                                    ) {
+
+                                        TextField(
+                                            value = category,
+                                            onValueChange = {},
+                                            readOnly = true,
+                                            placeholder = { Text("Select") },
+                                            trailingIcon = {
+                                                ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                                            },
+                                            modifier = Modifier
+                                                .menuAnchor()
+                                                .fillMaxWidth()
+                                                .clip(RoundedCornerShape(12.dp)),
+                                            colors = TextFieldDefaults.colors(
+                                                focusedContainerColor = Color(0xFFF1F3F4),
+                                                unfocusedContainerColor = Color(0xFFF1F3F4),
+                                                focusedIndicatorColor = Color.Transparent,
+                                                unfocusedIndicatorColor = Color.Transparent
+                                            )
                                         )
-                                    })
+
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+
+                                            categories.forEach { item ->
+
+                                                DropdownMenuItem(
+                                                    text = { Text(item) },
+                                                    onClick = {
+                                                        category = item
+                                                        expanded = false
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -359,6 +421,7 @@ fun AddMedicineScreen(
                                             manufacturer.isBlank() -> "Manufacturer is required"
                                             price.isBlank() || price.toInt() <= 0 -> "Please enter a valid price"
                                             quantity.isBlank() || quantity.toInt() < 0 -> "Please enter a valid quantity"
+                                            category.isBlank() -> "Please select category"
                                             expiryDate.isBlank() -> "Please select an expiry date"
                                             else -> null
                                         }
@@ -377,8 +440,8 @@ fun AddMedicineScreen(
                                                     price = price.toInt(),
                                                     quantity = quantity.toInt(),
                                                     expiryDate = expiryDate,
-                                                    category = category,
-                                                    lowStockThreshold = threshold.toInt()
+                                                    category = category
+//                                                    lowStockThreshold = threshold.toInt()
                                                 )
                                             )
                                             onAdd()

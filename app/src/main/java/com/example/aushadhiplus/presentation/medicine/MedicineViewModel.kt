@@ -39,7 +39,7 @@ class MedicineViewModel @Inject constructor(
         }
     }
 
-    private fun fetchMedicines() {
+     fun fetchMedicines() {
 //        viewModelScope.launch { // Pager.flow → already async stream
         try {
             val medicinesFlow = repository.getMedicines().cachedIn(viewModelScope)

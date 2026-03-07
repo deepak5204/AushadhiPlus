@@ -7,5 +7,5 @@ data class MedicineRequest(
     val quantity: Int,
     val expiryDate: String,
     val category: String,
-    val lowStockThreshold: Int
+    val lowStockThreshold: Int ? = 5
 )
