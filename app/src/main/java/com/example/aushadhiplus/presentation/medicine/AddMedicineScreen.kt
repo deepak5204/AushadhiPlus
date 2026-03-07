@@ -64,22 +64,26 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
+import com.example.aushadhiplus.domain.model.Medicine
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicineScreen(
     onDismiss: () -> Unit = {},
     onAdd: () -> Unit = {},
+    medicine: Medicine? = null,
     viewModel: MedicineViewModel = hiltViewModel()
 ) {
 
-    var name by remember { mutableStateOf("") }
-    var manufacturer by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    var quantity by remember { mutableStateOf("") }
-    var expiryDate by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var threshold by remember { mutableStateOf("") }
+    val isEditMode = medicine != null
+
+    var name by remember { mutableStateOf(medicine?.name ?: "") }
+    var manufacturer by remember { mutableStateOf( medicine?.manufacturer ?: "") }
+    var price by remember { mutableStateOf( if (medicine?.price != null) medicine.price.toString() else "") }
+    var quantity by remember { mutableStateOf( if(medicine?.quantity != null) medicine.quantity.toString() else "") }
+    var expiryDate by remember { mutableStateOf(medicine?.expiryDate ?: "") }
+    var category by remember { mutableStateOf( medicine?.category ?: "") }
+    var threshold by remember { mutableStateOf( "") }
 
     val datePickerState = rememberDatePickerState()
     var showDatePicker by remember { mutableStateOf(false) }
@@ -433,18 +437,36 @@ fun AddMedicineScreen(
                                             }
                                         } else {
                                             // Call ViewModel to save
-                                            viewModel.addMedicine(
-                                                MedicineRequest(
-                                                    name = name,
-                                                    manufacturer = manufacturer,
-                                                    price = price.toInt(),
-                                                    quantity = quantity.toInt(),
-                                                    expiryDate = expiryDate,
-                                                    category = category
-//                                                    lowStockThreshold = threshold.toInt()
+                                            if (isEditMode) {
+
+                                                viewModel.updateMedicine(
+                                                    medicine.id,
+                                                    MedicineRequest(
+                                                        name = name,
+                                                        manufacturer = manufacturer,
+                                                        price = price.toInt(),
+                                                        quantity = quantity.toInt(),
+                                                        expiryDate = expiryDate,
+                                                        category = category,
+                                                        lowStockThreshold = 5
+                                                    )
                                                 )
-                                            )
+
+                                            } else {
+                                                viewModel.addMedicine(
+                                                    MedicineRequest(
+                                                        name = name,
+                                                        manufacturer = manufacturer,
+                                                        price = price.toInt(),
+                                                        quantity = quantity.toInt(),
+                                                        expiryDate = expiryDate,
+                                                        category = category,
+                                                        lowStockThreshold = 5
+                                                    )
+                                                )
+                                            }
                                             onAdd()
+
                                         }
                                     },
                                     modifier = Modifier
@@ -457,7 +479,7 @@ fun AddMedicineScreen(
                                     ),
                                     shape = RoundedCornerShape(25.dp)
                                 ) {
-                                    Text("Add Medicine", color = Color.White)
+                                    Text(if (isEditMode) "Save" else "Add Medicine", color = Color.White)
                                 }
                             }
                         }

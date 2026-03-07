@@ -15,7 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
+import com.example.aushadhiplus.domain.model.Medicine
 import com.example.aushadhiplus.presentation.dashboard.DashboardBlue
 import com.example.aushadhiplus.presentation.dashboard.DashboardScreen
 import com.example.aushadhiplus.presentation.medicine.AddMedicineScreen
@@ -99,20 +102,41 @@ fun MainScreen() {
 
             composable("inventory") {
                 MedicineScreen(
+                    navController = navController,
                     onAddMedicineClick = {
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.remove<Medicine>("medicine")
+                        navController.navigate("add_medicine")
+                    },
+                    onEditClick = { medicine ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("medicine", medicine)
+
                         navController.navigate("add_medicine")
                     }
                 )
             }
 
             composable("add_medicine") {
+
+                val medicine =
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.get<Medicine>("medicine")
+
                 AddMedicineScreen(
                     onAdd = {
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.remove<Medicine>("medicine")
                         navController.popBackStack()
                     },
                     onDismiss = {
                         navController.popBackStack()
-                    }
+                    },
+                    medicine = medicine
                 )
             }
 

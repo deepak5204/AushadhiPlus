@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +26,30 @@ class MedicineViewModel @Inject constructor(
     }
 
 
+    fun updateMedicine(
+        id: String,
+        request: MedicineRequest
+    ) {
+
+        viewModelScope.launch {
+
+            _addState.value = AddMedicineUiState.Loading
+
+            try {
+
+                repository.updateMedicine(id, request)
+
+                _addState.value = AddMedicineUiState.Success
+
+            } catch (e: Exception) {
+
+                _addState.value =
+                    AddMedicineUiState.Error(e.message ?: "Update failed")
+            }
+        }
+    }
+
+
     fun addMedicine(request: MedicineRequest) {
         viewModelScope.launch {
             _addState.value = AddMedicineUiState.Loading
@@ -39,7 +62,7 @@ class MedicineViewModel @Inject constructor(
         }
     }
 
-     fun fetchMedicines() {
+    fun fetchMedicines() {
 //        viewModelScope.launch { // Pager.flow → already async stream
         try {
             val medicinesFlow = repository.getMedicines().cachedIn(viewModelScope)

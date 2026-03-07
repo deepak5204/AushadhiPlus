@@ -26,5 +26,10 @@ class MedicineRepository @Inject constructor(
 
     suspend fun addMedicine(request: MedicineRequest) = apiService.addMedicine(request)
 
+
+    suspend fun updateMedicine(
+        id: String, request: MedicineRequest
+    ) = apiService.updateMedicine(id, request)
+
     suspend fun deleteMedicine(id: String) = apiService.deleteMedicine(id)
 }
